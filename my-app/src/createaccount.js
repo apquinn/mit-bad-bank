@@ -1,12 +1,19 @@
 import * as React from "react";
-import { createContext, useContext } from "react";
-import Card from "./context.js";
+import { useContext, useEffect } from "react";
+import Card from "./components/SCard.js";
 import "bootstrap/dist/css/bootstrap.css";
-import { UserContext } from "./usercontext.js";
+import { UserContext } from "./contexts/usercontext.js";
+import DisplayField from "./components/DisplayField.js";
+import { findEmail } from "./components/findAttribute.js";
 
 export default function CreateAccount() {
+  useEffect(() => {
+    const element = document.getElementById("submit-button");
+    element.disabled = true;
+  }, []);
+
   const [show, setShow] = React.useState(true);
-  const [status, setStatus] = React.useState("");
+  const [status] = React.useState("");
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -14,10 +21,16 @@ export default function CreateAccount() {
 
   function validate(field, label) {
     if (!field) {
-      setStatus("Error: " + label);
-      setTimeout(() => setStatus(""), 3000);
+      alert("Error: " + label + " is required");
+      return false;
+    } else if (label === "password" && field.length < 8) {
+      alert("Password must be 8 charactors");
+      return false;
+    } else if (label === "email" && findEmail(field, ctx) === true) {
+      alert("An account for email " + email + " already exists");
       return false;
     }
+
     return true;
   }
 
@@ -26,8 +39,17 @@ export default function CreateAccount() {
     if (!validate(name, "name")) return;
     if (!validate(email, "email")) return;
     if (!validate(password, "password")) return;
-    ctx.users.push({ name, email, password, balance: 100, loggedin: false });
+
+    ctx.users.push({
+      type: "user",
+      name,
+      email,
+      password,
+      balance: 100,
+      loggedin: false,
+    });
     setShow(false);
+    alert("Successfully created account.");
   }
 
   function clearForm() {
@@ -35,6 +57,30 @@ export default function CreateAccount() {
     setEmail("");
     setPassword("");
     setShow(true);
+  }
+
+  function handleChangeName(event) {
+    setName(event.currentTarget.value);
+    const element = document.getElementById("submit-button");
+    if (event.currentTarget.value === "" && email === "" && password === "")
+      element.disabled = true;
+    else element.disabled = false;
+  }
+
+  function handleChangeEmail(event) {
+    setEmail(event.currentTarget.value);
+    const element = document.getElementById("submit-button");
+    if (event.currentTarget.value === "" && name === "" && password === "")
+      element.disabled = true;
+    else element.disabled = false;
+  }
+
+  function handleChangePassword(event) {
+    setPassword(event.currentTarget.value);
+    const element = document.getElementById("submit-button");
+    if (event.currentTarget.value === "" && name === "" && email === "")
+      element.disabled = true;
+    else element.disabled = false;
   }
 
   return (
@@ -46,39 +92,28 @@ export default function CreateAccount() {
         show ? (
           <>
             Name
-            <br />
-            <input
+            <DisplayField
               type="input"
-              className="form-control"
               id="name"
-              placeholder="Enter name"
               value={name}
-              onChange={(e) => setName(e.currentTarget.value)}
+              handleChange={handleChangeName}
             />
-            <br />
             Email address
-            <br />
-            <input
+            <DisplayField
               type="input"
-              className="form-control"
               id="email"
-              placeholder="Enter email"
               value={email}
-              onChange={(e) => setEmail(e.currentTarget.value)}
+              handleChange={handleChangeEmail}
             />
-            <br />
             Password
-            <br />
-            <input
+            <DisplayField
               type="password"
-              className="form-control"
               id="password"
-              placeholder="Enter password"
               value={password}
-              onChange={(e) => setPassword(e.currentTarget.value)}
+              handleChange={handleChangePassword}
             />
-            <br />
             <button
+              id="submit-button"
               type="submit"
               className="btn btn-light"
               onClick={handleCreate}

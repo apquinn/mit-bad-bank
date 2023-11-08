@@ -1,19 +1,25 @@
 import * as React from "react";
-import findCurrentAttribute from "./findCurrentAttribute.js";
-import Card from "./context.js";
-import { UserContext } from "./usercontext.js";
+import { useEffect } from "react";
+import { findCurrentAttribute } from "./components/findAttribute.js";
+import Card from "./components/SCard.js";
+import { UserContext } from "./contexts/usercontext.js";
+import DisplayField from "./components/DisplayField.js";
 
 export default function Login() {
-  const [status, setStatus] = React.useState("");
-  const [loggedin, setLoggedin] = React.useState(false);
+  const ctx = React.useContext(UserContext);
+  const [loggedin, setLoggedin] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const ctx = React.useContext(UserContext);
+  console.log(loggedin);
+
+  useEffect(() => {
+    setEmail(findCurrentAttribute("email", ctx));
+    setPassword(findCurrentAttribute("password", ctx));
+  }, [ctx]);
 
   function validate(field, label) {
-    if (!field) {
-      setStatus("Error: " + label);
-      setTimeout(() => setStatus(""), 3000);
+    if (field === "") {
+      alert("Error: " + label + " is required");
       return false;
     }
     return true;
@@ -29,58 +35,69 @@ export default function Login() {
         user.loggedin = true;
         localLoggedIn = true;
         setLoggedin(true);
+
+        ctx.users.push({
+          type: "login",
+          name: user.name,
+          email: user.email,
+          action: "login",
+          balance: user.balance,
+        });
       }
+      return "";
     });
     if (!localLoggedIn) {
-      setStatus("Email or password invalid.");
-      setTimeout(() => setStatus(""), 3000);
+      alert("Email or password invalid.");
     }
   }
 
   function handleLogout() {
     ctx.users.map((user) => {
-      user.loggedin = false;
+      if (user.type === "user") {
+        if (user.loggedin === true) {
+          ctx.users.push({
+            type: "login",
+            name: user.name,
+            email: user.email,
+            action: "logout",
+            balance: user.balance,
+          });
+        }
+        user.loggedin = false;
+      }
       return "";
     });
-    setLoggedin(false);
     setEmail("");
     setPassword("");
+    setLoggedin(false);
   }
 
   let localLoggedIn = false;
-  if (findCurrentAttribute("name", ctx) !== null) localLoggedIn = true;
+  if (findCurrentAttribute("name", ctx) !== "") localLoggedIn = true;
 
   return (
     <>
       <Card
         bgcolor="primary"
         header="Login"
-        status={status}
+        status=""
         body={
           localLoggedIn === false ? (
             <>
               Email
-              <br />
-              <input
+              <DisplayField
                 type="input"
-                className="form-control"
                 id="email"
-                placeholder="Enter email"
                 value={email}
-                onChange={(e) => setEmail(e.currentTarget.value)}
+                handleChange={(e) => setEmail(e.currentTarget.value)}
               />
-              <br />
               Password
-              <br />
-              <input
+              <DisplayField
                 type="password"
-                className="form-control"
                 id="password"
-                placeholder="Enter password"
                 value={password}
-                onChange={(e) => setPassword(e.currentTarget.value)}
+                handleChange={(e) => setPassword(e.currentTarget.value)}
               />
-              <br />
               <button
                 type="submit"
                 className="btn btn-light"

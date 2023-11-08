@@ -1,16 +1,14 @@
-import NavBar from "./navbar.js";
+import NavBar from "./components/navbar.js";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
+import * as ReactDOM from "react-dom/client";
 import { HashRouter, Route, Routes } from "react-router-dom";
-import { createContext } from "react";
 import Home from "./home.js";
 import CreateAccount from "./createaccount.js";
 import Login from "./login.js";
 import Deposit from "./deposit.js";
 import Withdraw from "./withdraw.js";
-import Balance from "./balance.js";
 import AllData from "./alldata.js";
-import { UserContext } from "./usercontext.js";
+import { UserContext } from "./contexts/usercontext.js";
 
 function Spa() {
   return (
@@ -20,6 +18,7 @@ function Spa() {
         value={{
           users: [
             {
+              type: "user",
               name: "abel",
               email: "abel@mit.edu",
               password: "secret",
@@ -32,11 +31,10 @@ function Spa() {
         <div className="container" style={{ padding: "20px" }}>
           <Routes>
             <Route path="/" exact element={<Home />} />
-            <Route path="/CreateAccount/" element={<CreateAccount />} />
+            <Route path="/createaccount/" element={<CreateAccount />} />
             <Route path="/login/" element={<Login />} />
             <Route path="/deposit/" element={<Deposit />} />
-            <Route path="/withdraw/" element={<Withdraw />} />
-            <Route path="/balance/" element={<Balance />} />
+            <Route path="/withdrawl/" element={<Withdraw />} />
             <Route path="/alldata/" element={<AllData />} />
           </Routes>
         </div>
@@ -45,4 +43,5 @@ function Spa() {
   );
 }
 
-ReactDOM.render(<Spa />, document.getElementById("root"));
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<Spa />);

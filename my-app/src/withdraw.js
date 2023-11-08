@@ -1,9 +1,9 @@
 import * as React from "react";
-import findCurrentAttribute from "./findCurrentAttribute.js";
-import DisplayAmountForm from "./DisplayAmountForm.js";
-import handleTransaction from "./handleTransaction.js";
-import Card from "./context.js";
-import { UserContext } from "./usercontext.js";
+import { findCurrentAttribute } from "./components/findAttribute.js";
+import DisplayAmountForm from "./components/DisplayAmountForm.js";
+import handleTransaction from "./components/handleTransaction.js";
+import Card from "./components/SCard.js";
+import { UserContext } from "./contexts/usercontext.js";
 
 export default function Withdraw() {
   const [status, setStatus] = React.useState("");
@@ -12,9 +12,10 @@ export default function Withdraw() {
   const ctx = React.useContext(UserContext);
 
   let localLoggedIn = false;
-  if (findCurrentAttribute("name", ctx) !== null) localLoggedIn = true;
+  if (findCurrentAttribute("name", ctx) !== "") localLoggedIn = true;
 
-  if (balance === "") setBalance(findCurrentAttribute("balance", ctx));
+  if (balance === "" && findCurrentAttribute("balance", ctx) !== "")
+    setBalance(findCurrentAttribute("balance", ctx));
 
   return (
     <>
@@ -31,7 +32,7 @@ export default function Withdraw() {
               type="Withdrawl"
               handleOnclick={() =>
                 handleTransaction(
-                  Number(withdrawl),
+                  withdrawl,
                   setWithdrawl,
                   ctx,
                   balance,
