@@ -84,18 +84,18 @@ export default function Login() {
         body={
           localLoggedIn === false ? (
             <>
-              Email
               <DisplayField
                 type="input"
                 id="email"
                 value={email}
+                name="Email"
                 handleChange={(e) => setEmail(e.currentTarget.value)}
               />
-              Password
               <DisplayField
                 type="password"
                 id="password"
                 value={password}
+                name="Password"
                 handleChange={(e) => setPassword(e.currentTarget.value)}
               />
               <button

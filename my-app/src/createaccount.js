@@ -91,25 +91,25 @@ export default function CreateAccount() {
       body={
         show ? (
           <>
-            Name
             <DisplayField
               type="input"
               id="name"
               value={name}
+              name="Name"
               handleChange={handleChangeName}
             />
-            Email address
             <DisplayField
               type="input"
               id="email"
               value={email}
+              name="Email address"
               handleChange={handleChangeEmail}
             />
-            Password
             <DisplayField
               type="password"
               id="password"
               value={password}
+              name="Password"
               handleChange={handleChangePassword}
             />
             <button

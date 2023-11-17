@@ -37,6 +37,7 @@ export default function DisplayAllCard(props) {
           <div className="col-md-3">balance: {user.balance}</div>
         </div>
       );
+    return "";
   });
 
   return (

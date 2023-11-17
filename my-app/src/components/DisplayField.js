@@ -1,7 +1,13 @@
-export default function DisplayAccountField({ type, id, value, handleChange }) {
+export default function DisplayAccountField({
+  type,
+  id,
+  value,
+  name,
+  handleChange,
+}) {
   return (
     <>
-      <br />
+      <label for={id}>{name}</label>
       <input
         type={type}
         className="form-control"
